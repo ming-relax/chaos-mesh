@@ -3,6 +3,7 @@ LDFLAGS = $(if $(IMG_LDFLAGS),$(IMG_LDFLAGS),$(if $(DEBUGGER),,-s -w) $(shell ./
 
 # SET DOCKER_REGISTRY to change the docker registry
 DOCKER_REGISTRY_PREFIX := $(if $(DOCKER_REGISTRY),$(DOCKER_REGISTRY)/,)
+DOCKER_REGISTRY_USER := $(if $(DOCKER_REGISTRY_USER),$(DOCKER_REGISTRY_USER),"pingcap")
 DOCKER_BUILD_ARGS := --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTPS_PROXY} --build-arg UI=${UI} --build-arg SWAGGER=${SWAGGER} --build-arg LDFLAGS="${LDFLAGS}"
 
 GOVER_MAJOR := $(shell go version | sed -E -e "s/.*go([0-9]+)[.]([0-9]+).*/\1/")
@@ -202,32 +203,32 @@ image-binary:
 endif
 
 image-chaos-daemon: image-binary
-	docker build -t ${DOCKER_REGISTRY_PREFIX}pingcap/chaos-daemon:${IMAGE_TAG} ${DOCKER_BUILD_ARGS} images/chaos-daemon
+	docker build -t ${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-daemon:${IMAGE_TAG} ${DOCKER_BUILD_ARGS} images/chaos-daemon
 
 image-chaos-mesh: image-binary
-	docker build -t ${DOCKER_REGISTRY_PREFIX}pingcap/chaos-mesh:${IMAGE_TAG} ${DOCKER_BUILD_ARGS} images/chaos-mesh
+	docker build -t ${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-mesh:${IMAGE_TAG} ${DOCKER_BUILD_ARGS} images/chaos-mesh
 
 image-chaos-fs: image-binary
-	docker build -t ${DOCKER_REGISTRY_PREFIX}pingcap/chaos-fs:${IMAGE_TAG} ${DOCKER_BUILD_ARGS} images/chaosfs
+	docker build -t ${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-fs:${IMAGE_TAG} ${DOCKER_BUILD_ARGS} images/chaosfs
 
 image-chaos-scripts: image-binary
-	docker build -t ${DOCKER_REGISTRY_PREFIX}pingcap/chaos-scripts:${IMAGE_TAG} ${DOCKER_BUILD_ARGS} images/chaos-scripts
+	docker build -t ${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-scripts:${IMAGE_TAG} ${DOCKER_BUILD_ARGS} images/chaos-scripts
 
 image-chaos-dashboard: image-binary
-	docker build -t ${DOCKER_REGISTRY_PREFIX}pingcap/chaos-dashboard:${IMAGE_TAG} ${DOCKER_BUILD_ARGS} images/chaos-dashboard
+	docker build -t ${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-dashboard:${IMAGE_TAG} ${DOCKER_BUILD_ARGS} images/chaos-dashboard
 
 image-chaos-kernel:
-	docker build -t ${DOCKER_REGISTRY_PREFIX}pingcap/chaos-kernel ${DOCKER_BUILD_ARGS} --build-arg MAKE_JOBS=${MAKE_JOBS} --build-arg MIRROR=${UBUNTU_MIRROR} images/chaos-kernel
+	docker build -t ${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-kernel ${DOCKER_BUILD_ARGS} --build-arg MAKE_JOBS=${MAKE_JOBS} --build-arg MIRROR=${UBUNTU_MIRROR} images/chaos-kernel
 
 docker-push:
-	docker push "${DOCKER_REGISTRY_PREFIX}pingcap/chaos-mesh:${IMAGE_TAG}"
-	docker push "${DOCKER_REGISTRY_PREFIX}pingcap/chaos-dashboard:${IMAGE_TAG}"
-	docker push "${DOCKER_REGISTRY_PREFIX}pingcap/chaos-fs:${IMAGE_TAG}"
-	docker push "${DOCKER_REGISTRY_PREFIX}pingcap/chaos-daemon:${IMAGE_TAG}"
-	docker push "${DOCKER_REGISTRY_PREFIX}pingcap/chaos-scripts:${IMAGE_TAG}"
+	docker push "${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-mesh:${IMAGE_TAG}"
+	docker push "${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-dashboard:${IMAGE_TAG}"
+	docker push "${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-fs:${IMAGE_TAG}"
+	docker push "${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-daemon:${IMAGE_TAG}"
+	docker push "${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-scripts:${IMAGE_TAG}"
 
 docker-push-chaos-kernel:
-	docker push "${DOCKER_REGISTRY_PREFIX}pingcap/chaos-kernel:${IMAGE_TAG}"
+	docker push "${DOCKER_REGISTRY_PREFIX}${DOCKER_REGISTRY_USER}/chaos-kernel:${IMAGE_TAG}"
 
 $(GOBIN)/controller-gen:
 	$(GO) get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.2.5
